@@ -1,11 +1,424 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <title>My First GitHub Site</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffecf2;
+      --bg2:#fff7fb;
+      --pink:#ff4d8d;
+      --pink2:#ff2f78;
+      --text:#2b2b2b;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg2), var(--bg1));
+      overflow:hidden;
+    }
+
+    .card{
+      width:min(720px, 92vw);
+      padding: clamp(22px, 4vw, 36px);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.10);
+      backdrop-filter: blur(8px);
+      position: relative;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(26px, 4vw, 44px);
+      letter-spacing: -0.02em;
+      text-align:center;
+    }
+    p{
+      margin:0 0 22px;
+      text-align:center;
+      font-size: clamp(14px, 2vw, 18px);
+      opacity:0.85;
+    }
+
+    .stage{
+      position: relative;
+      height: 260px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.35));
+      border: 1px solid rgba(255, 77, 141, 0.18);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+    }
+
+    .question{
+      position:absolute;
+      inset: 18px 18px auto 18px;
+      text-align:center;
+      font-weight:700;
+      font-size: clamp(20px, 3vw, 34px);
+    }
+
+    .btns{
+      position:absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      padding: 0 16px;
+    }
+
+    button{
+      border:0;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.10);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active{ transform: scale(0.98); }
+
+    #yesBtn{
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
+      color: white;
+    }
+    #yesBtn:hover{ transform: translateY(-1px); box-shadow: 0 12px 26px rgba(255,47,120,0.25); }
+
+    #noBtn{
+      background: white;
+      color: #333;
+      border: 1px solid rgba(0,0,0,0.08);
+      position: relative;
+    }
+    #noBtn:hover{ transform: translateY(-1px); }
+
+    /* Teddy bears (CSS art) */
+    .bears{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 44px;
+      pointer-events:none;
+      opacity:0;
+      transform: translateY(18px) scale(0.98);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .bears.show{
+      opacity:1;
+      transform: translateY(0) scale(1);
+    }
+
+    .bear{
+      width: 140px;
+      height: 140px;
+      position: relative;
+      transform: translateX(0);
+      transition: transform .55s cubic-bezier(.2,.9,.2,1);
+    }
+
+    .bear .head{
+      position:absolute;
+      inset: 18px 10px 10px 10px;
+      border-radius: 50%;
+      background: #caa27a;
+      box-shadow: inset 0 -10px 0 rgba(0,0,0,0.06);
+    }
+
+    .bear .ear{
+      position:absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #caa27a;
+      top: 6px;
+      box-shadow: inset 0 -6px 0 rgba(0,0,0,0.06);
+    }
+    .bear .ear::after{
+      content:"";
+      position:absolute;
+      inset: 12px;
+      border-radius:50%;
+      background:#e8c7a6;
+    }
+    .bear .ear.left{ left: 8px; }
+    .bear .ear.right{ right: 8px; }
+
+    .bear .face{
+      position:absolute;
+      left: 50%;
+      top: 62px;
+      transform: translateX(-50%);
+      width: 92px;
+      height: 72px;
+      border-radius: 40px;
+      background:#e8c7a6;
+      box-shadow: inset 0 -6px 0 rgba(0,0,0,0.05);
+    }
+
+    .bear .eye{
+      position:absolute;
+      width: 10px;
+      height: 10px;
+      border-radius:50%;
+      background:#2b2b2b;
+      top: 22px;
+    }
+    .bear .eye.left{ left: 22px; }
+    .bear .eye.right{ right: 22px; }
+
+    .bear .snout{
+      position:absolute;
+      left:50%;
+      top: 34px;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 22px;
+      border-radius: 14px;
+      background:#d8a97f;
+    }
+
+    .bear .nose{
+      position:absolute;
+      left:50%;
+      top: 38px;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 10px;
+      border-radius: 10px;
+      background:#2b2b2b;
+    }
+
+    .bear .mouth{
+      position:absolute;
+      left:50%;
+      top: 48px;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 16px;
+    }
+    .bear .mouth::before,
+    .bear .mouth::after{
+      content:"";
+      position:absolute;
+      width: 14px;
+      height: 10px;
+      border: 2px solid #2b2b2b;
+      border-top: 0;
+      border-left: 0;
+      border-radius: 0 0 12px 0;
+      top: 2px;
+    }
+    .bear .mouth::before{
+      left: 2px;
+      transform: scaleX(-1);
+    }
+    .bear .mouth::after{
+      right: 2px;
+    }
+
+    .heart{
+      position:absolute;
+      left:50%;
+      top: 50%;
+      transform: translate(-50%,-50%) scale(0);
+      width: 22px;
+      height: 22px;
+      background: var(--pink);
+      transform-origin:center;
+      opacity:0;
+    }
+    .heart::before,
+    .heart::after{
+      content:"";
+      position:absolute;
+      width: 22px;
+      height: 22px;
+      border-radius:50%;
+      background: var(--pink);
+      top: -11px;
+    }
+    .heart::before{ left: 0; }
+    .heart::after{ left: 11px; top: 0; }
+    .heart{
+      border-radius: 4px;
+      transform: translate(-50%,-50%) rotate(45deg) scale(0);
+    }
+
+    /* Kiss animation state */
+    .kiss .bear.left { transform: translateX(26px); }
+    .kiss .bear.right { transform: translateX(-26px); }
+
+    .kiss .heart{
+      animation: pop 1.2s ease forwards;
+    }
+
+    @keyframes pop{
+      0%   { transform: translate(-50%,-50%) rotate(45deg) scale(0); opacity:0; }
+      20%  { transform: translate(-50%,-60%) rotate(45deg) scale(1.1); opacity:1; }
+      60%  { transform: translate(-50%,-85%) rotate(45deg) scale(1); opacity:1; }
+      100% { transform: translate(-50%,-120%) rotate(45deg) scale(0.9); opacity:0; }
+    }
+
+    .message{
+      margin-top: 18px;
+      text-align:center;
+      font-size: clamp(18px, 2.4vw, 24px);
+      font-weight: 800;
+      color: var(--pink2);
+      min-height: 1.6em;
+    }
+
+    /* Decorative floating hearts */
+    .floaters{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0.65;
+    }
+    .floater{
+      position:absolute;
+      font-size: 18px;
+      animation: drift linear infinite;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.10));
+    }
+    @keyframes drift{
+      from { transform: translateY(120vh) translateX(0); }
+      to   { transform: translateY(-20vh) translateX(40px); }
+    }
+  </style>
 </head>
 <body>
-  <h1>It works 🎉</h1>
-  <p>Hosted with GitHub Pages.</p>
+  <div class="floaters" aria-hidden="true" id="floaters"></div>
+
+  <div class="card">
+    <div class="stage" id="stage">
+      <div class="question" id="question">Will you be my Valentine? 💘</div>
+
+      <div class="bears" id="bears">
+        <div class="bear left">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+          <div class="head"></div>
+          <div class="face">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="snout"></div>
+            <div class="nose"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+
+        <div class="heart" id="heart"></div>
+
+        <div class="bear right">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+          <div class="head"></div>
+          <div class="face">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="snout"></div>
+            <div class="nose"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btns" id="btns">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 🙃</button>
+      </div>
+    </div>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const bears  = document.getElementById('bears');
+    const btns   = document.getElementById('btns');
+    const msg    = document.getElementById('message');
+
+    // Make "No" run away (hover or touch)
+    function moveNoButton() {
+      const stageRect = stage.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      // Keep within stage bounds, avoid edges
+      const padding = 18;
+
+      const maxLeft = stageRect.width - btnRect.width - padding;
+      const maxTop  = stageRect.height - btnRect.height - padding;
+
+      const left = Math.floor(Math.random() * (maxLeft - padding + 1)) + padding;
+      const top  = Math.floor(Math.random() * (maxTop - padding + 1)) + padding;
+
+      // Place absolutely relative to stage
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = left + 'px';
+      noBtn.style.top  = top + 'px';
+    }
+
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    // for mobile: if finger touches it, it jumps
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+    // YES: show bears, kiss, show message
+    yesBtn.addEventListener('click', () => {
+      msg.textContent = "I love you baby 💞";
+      bears.classList.add('show');
+      stage.classList.add('kiss');
+
+      // Hide buttons after yes (optional but cute)
+      btns.style.opacity = '0';
+      btns.style.pointerEvents = 'none';
+
+      // Re-trigger heart animation if clicked again (just in case)
+      const heart = document.getElementById('heart');
+      heart.style.animation = 'none';
+      // force reflow
+      void heart.offsetWidth;
+      heart.style.animation = '';
+    });
+
+    // Cute floating hearts in the background
+    const floaters = document.getElementById('floaters');
+    const hearts = ["💗","💖","💕","💘","💝","💞"];
+    for (let i = 0; i < 18; i++){
+      const s = document.createElement('div');
+      s.className = 'floater';
+      s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+      const left = Math.random()*100;
+      const duration = 10 + Math.random()*14;
+      const delay = -Math.random()*duration;
+      const size = 14 + Math.random()*18;
+      s.style.left = left + 'vw';
+      s.style.animationDuration = duration + 's';
+      s.style.animationDelay = delay + 's';
+      s.style.fontSize = size + 'px';
+      floaters.appendChild(s);
+    }
+  </script>
 </body>
 </html>
-
