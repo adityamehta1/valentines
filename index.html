@@ -311,4 +311,150 @@
     }
 
     /* Floating hearts */
-    .floaters{ position:fixed; inset:0; pointer-events:none; opacity
+    .floaters{ position:fixed; inset:0; pointer-events:none; opacity:0.7; }
+    .floater{
+      position:absolute;
+      font-size: 18px;
+      animation: drift linear infinite;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.10));
+    }
+    @keyframes drift{
+      from { transform: translateY(120vh) translateX(0); }
+      to   { transform: translateY(-20vh) translateX(40px); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="floaters" aria-hidden="true" id="floaters"></div>
+
+  <div class="card">
+    <div class="stage" id="stage">
+      <div class="question" id="question">Will you be my Valentine? 💘</div>
+
+      <div class="bears" id="bears">
+        <div class="bear left">
+          <div class="ear left"></div><div class="ear right"></div>
+          <div class="head"></div>
+          <div class="face">
+            <div class="eye left"></div><div class="eye right"></div>
+            <div class="cheek left"></div><div class="cheek right"></div>
+            <div class="snout"></div><div class="nose"></div><div class="mouth"></div>
+          </div>
+        </div>
+
+        <div class="heart" id="heart"></div>
+
+        <div class="bear right">
+          <div class="ear left"></div><div class="ear right"></div>
+          <div class="head"></div>
+          <div class="face">
+            <div class="eye left"></div><div class="eye right"></div>
+            <div class="cheek left"></div><div class="cheek right"></div>
+            <div class="snout"></div><div class="nose"></div><div class="mouth"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yes button stays in a row at the bottom -->
+      <div class="btnRow" id="btnRow">
+        <button id="yesBtn">Yes 💖</button>
+      </div>
+
+      <!-- No button is free-floating so it can dodge correctly -->
+      <button id="noBtn">No 🙃</button>
+    </div>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const bears  = document.getElementById('bears');
+    const btnRow = document.getElementById('btnRow');
+    const msg    = document.getElementById('message');
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    // Move "No" somewhere inside the stage (never off-screen)
+    function moveNoButton() {
+      const stageRect = stage.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const pad = 14;
+      const minX = pad;
+      const minY = 92;                 // keep it below the question
+      const maxX = stageRect.width - btnRect.width - pad;
+      const maxY = stageRect.height - btnRect.height - 70; // keep it above bottom-ish
+
+      const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
+      const y = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
+
+    // Make it dodge on hover and also when cursor gets close
+    noBtn.addEventListener('mouseenter', moveNoButton);
+
+    stage.addEventListener('mousemove', (e) => {
+      const stageRect = stage.getBoundingClientRect();
+      const bx = e.clientX - stageRect.left;
+      const by = e.clientY - stageRect.top;
+
+      const nb = noBtn.getBoundingClientRect();
+      const nx = (nb.left - stageRect.left) + nb.width/2;
+      const ny = (nb.top  - stageRect.top)  + nb.height/2;
+
+      const dist = Math.hypot(bx - nx, by - ny);
+
+      // If cursor is within 90px of the No button, it runs away
+      if (dist < 90) moveNoButton();
+    });
+
+    // Mobile: tap/approach makes it jump
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    }, { passive: false });
+
+    // YES: show bears, kiss, show message
+    yesBtn.addEventListener('click', () => {
+      msg.textContent = "I love you baby 💞";
+      bears.classList.add('show');
+      stage.classList.add('kiss');
+
+      btnRow.style.opacity = '0';
+      btnRow.style.pointerEvents = 'none';
+      noBtn.style.opacity = '0';
+      noBtn.style.pointerEvents = 'none';
+
+      // re-trigger heart animation if needed
+      const heart = document.getElementById('heart');
+      heart.style.animation = 'none';
+      void heart.offsetWidth;
+      heart.style.animation = '';
+    });
+
+    // Start "No" at a sensible spot
+    moveNoButton();
+
+    // Floating hearts
+    const floaters = document.getElementById('floaters');
+    const hearts = ["💗","💖","💕","💘","💝","💞"];
+    for (let i = 0; i < 18; i++){
+      const s = document.createElement('div');
+      s.className = 'floater';
+      s.textContent = hearts[Math.floor(Math.random()*hearts.length)];
+      s.style.left = (Math.random()*100) + 'vw';
+      const duration = 10 + Math.random()*14;
+      s.style.animationDuration = duration + 's';
+      s.style.animationDelay = (-Math.random()*duration) + 's';
+      s.style.fontSize = (14 + Math.random()*18) + 'px';
+      floaters.appendChild(s);
+    }
+  </script>
+</body>
+</html>
